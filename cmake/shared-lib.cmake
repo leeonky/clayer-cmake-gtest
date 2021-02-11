@@ -10,19 +10,18 @@ macro(define_test_runner source)
 endmacro()
 
 macro(add_test_runner)
-	find_package(GTest REQUIRED)
-	include_directories(${GTEST_INCLUDE_DIRS})
-
 	string(REPLACE test/ "" main_target ${runner_source})
 	set(main_target ${main_target}.tests)
 
 	list(PREPEND source_codes ${runner_source})
 	add_executable (${main_target} ${source_codes})
-	target_link_libraries(${main_target} ${GTEST_LIBRARIES} pthread)
+	target_link_libraries(${main_target} gtest gtest_main)
 
+    set(wraps "")
     foreach(function IN LISTS mock_functions)
-		set_property(TARGET ${main_target} APPEND PROPERTY LINK_FLAGS "-Wl,--wrap=${function}")
+		set(wraps "${wraps} -Wl,--wrap=${function}")
 	endforeach()
+	set_property(TARGET ${main_target} APPEND PROPERTY LINK_FLAGS "${wraps}")
 
 	add_test(${main_target} ${main_target})
 endmacro()
