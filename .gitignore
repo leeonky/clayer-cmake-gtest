@@ -12,4 +12,6 @@ _deps
 *.so
 *.a
 *.tests
+clayer.cbp
+.idea/
 
